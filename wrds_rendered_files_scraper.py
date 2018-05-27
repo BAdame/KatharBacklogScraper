@@ -25,8 +25,8 @@ endOfSentenceMarkers = ["? ", "! ", ". ", ".\t", "\n", "\r",
                         u"\u2022", # Bullet point
                         ]
 quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars"]
-negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down", "weak", "reduced"]
-posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record", "negatively"]
+negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down", "weak", "reduced", "negatively"]
+posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record"]
 
 # The root folder for the data files
 INPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src/textfiles'
