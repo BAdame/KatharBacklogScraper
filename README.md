@@ -11,3 +11,17 @@ done
 
 ### wrds_rendered_files_scraper.py 
 This is where the bulk of the scraping logic lives.
+
+### Generating parser files
+ANTLR is used to generate a language parser for some of the scripts.
+
+To install:
+```bash
+curl -O http://www.antlr.org/download/antlr-4.7.1-complete.jar
+sudo mv antlr-4.7.1-complete.jar /usr/local/lib
+
+export CLASSPATH=".:/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH"
+
+alias antlr4='java -Xmx500M -cp "/usr/local/lib/antlr-4.7.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool' 
+alias grun='java org.antlr.v4.gui.TestRig'
+```

@@ -25,6 +25,9 @@ class OutputObject:
         # "Backlog sucked. Don't ask about our backlog." this would take the value of 44.
         blog_sent = 0, 
         
+        # The text around 'backlog' mentions
+        blog_surrounding_text = '',
+        
         cik = '', 
         
         conf_call_filename = '',
@@ -64,6 +67,7 @@ class OutputObject:
         self.blog_quant_dist = blog_quant_dist
         self.blog_sent = blog_sent
         self.blog_sh_dist = blog_sh_dist
+        self.blog_surrounding_text = blog_surrounding_text
         self.cik = cik
         self.conf_call_filename = conf_call_filename
         self.fdate = fdate
@@ -84,12 +88,13 @@ class OutputObject:
         Columns aligned with the getCsvHeaders() method.
         TODO: Use reflection to guarantee the ordering is always the same.
         '''
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
             self.blog_mention, 
             self.blog_quant,
             self.blog_quant_dist,
             self.blog_sent, 
             self.blog_sh_dist, 
+            self.blog_surrounding_text,
             self.cik, 
             self.conf_call_filename, 
             self.fdate, 
@@ -110,5 +115,5 @@ class OutputObject:
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.
         '''
-        return "blog_mention,blog_quant,blog_quant_dist,blog_sent,blog_sh_dist,cik,conf_call_filename,fdate,gvkey,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
+        return "blog_mention,blog_quant,blog_quant_dist,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
         

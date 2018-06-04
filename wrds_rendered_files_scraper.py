@@ -73,6 +73,15 @@ def getBlogShDist(text, matchingIndices, charsToSearch = 500):
     phrasesToMatch = ["safe harbor", "private securities litigation reform", "forward-looking", "forward looking"]
     return getClosestDistanceToPhrases(text, matchingIndices, charsToSearch, phrasesToMatch)
 
+# shortest distance (in characters) between any mention of backlog
+def getBlogSurroundingText(text, matchingIndices, charsToSearch = 150):
+    textSeparator = '   -----------   '
+    textToReturn = ''
+    for index in matchingIndices:
+        surroundingText = text[ max(0, index - charsToSearch) : min(len(text), index + charsToSearch) ]
+        textToReturn += surroundingText + textSeparator
+    return re.sub('[\n\r\t,]', ' ', textToReturn)
+
 # number of backlog mentions
 def getNBlogMention(text, matchingIndices):
     return len(matchingIndices)
@@ -194,8 +203,9 @@ def main():
                     blog_mention = getBlogMention(dataFileRawText, backlogMentionLocations),
                     blog_quant = getBlogQuant(dataFileRawText, backlogMentionLocations),
                     blog_quant_dist = getBlogQuantDist(dataFileRawText, backlogMentionLocations),
-                    blog_sh_dist = getBlogShDist(dataFileRawText, backlogMentionLocations),
                     blog_sent = getBlogSent(dataFileRawText, backlogMentionLocations),
+                    blog_sh_dist = getBlogShDist(dataFileRawText, backlogMentionLocations),
+                    blog_surrounding_text = getBlogSurroundingText(dataFileRawText, backlogMentionLocations),
                     cik = inputObject.cik,
                     conf_call_filename = inputObject.conf_call_filename,
                     fdate = inputObject.fdate,
