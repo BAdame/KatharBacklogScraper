@@ -19,10 +19,12 @@ import sys
 INPUT_FILE_PATH = './inputFiles/full_input.csv' if sys.argv[1] is None else sys.argv[1]
 
 # Punctuation defining end of sentences
-endOfSentenceMarkers = ["? ", "! ", ". ", ".\t", "\n", "\r",
-                        u"\u2022", # Bullet point
-                        ]
-quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars"]
+end_of_sentence_markers = ["? ", "! ", ". ", ".\t", "\n", "\r", u"\u2022",  # Bullet point
+                           ]
+end_of_sentence_markers_no_newlines = ["? ", "! ", ". ", ".\t", u"\u2022",  # Bullet point
+                                       ]
+quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars", " unit", "home", "house", 'railcar',
+                       "theater"]
 negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down", "weak", "reduced", "negatively"]
 posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record"]
 
@@ -32,6 +34,7 @@ INPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahPr
 
 # The name and location of the file to print results to
 OUTPUT_FILE = 'output/test-results-full-rendered.csv' if sys.argv[2] is None else sys.argv[2]
+
 
 ###############################
 # Below are the text matching rules, which can be tweaked to produce different outputs.
@@ -54,6 +57,17 @@ def get_blog_quant(text, matching_indices):
     return 0
 
 
+# 0/1 variable: 1 if ANY mention of "backlog" is within the same sentence of
+# "%", "$", "million", "billion", "percent", or "dollars"; 0 otherwise
+def get_blog_quant_no_newlines(text, matching_indices):
+    for index in matching_indices:
+        words_around_backlog = get_sentence(text, index, end_of_sentence_markers_no_newlines)
+        for phrase in quantPhrasesToMatch:
+            if phrase in words_around_backlog:
+                return 1
+    return 0
+
+
 # Number of sentences backlog was mentioned in
 # Example: if the only mentions of backlog were: 
 # "Backlog sucked. Don't ask about our backlog." this would take the value of 2.
@@ -61,38 +75,39 @@ def get_blog_sent(text, matching_indices):
     sentences = set()
     for index in matching_indices:
         sentences.add(get_sentence(text, index))
-        
+
     return len(sentences)
 
 
 # shortest distance (in characters) between any mention of backlog and any of the 
 # existing quantitative phrases/characters - max of 300
-def get_blog_quant_dist(text, matching_indices, chars_to_search = 300):
+def get_blog_quant_dist(text, matching_indices, chars_to_search=300):
     return get_closest_distance_to_phrases(text, matching_indices, chars_to_search, quantPhrasesToMatch)
 
 
-def get_blog_quant_table(text, matching_indices, chars_to_search = 40):
+def get_blog_quant_table(text, matching_indices, chars_to_search=50):
     for index in matching_indices:
-        text_after_backlog = text[index : index+chars_to_search]
+        text_after_backlog = text[index: index + chars_to_search]
         # Match at least 3 digits in a row, excluding commas
-        number_matches = re.findall('\d{3}', text_after_backlog.replace(',', ''))
-        if len(number_matches) > 0:
+        number_matches = re.findall('[0-9]{1,3}(,([0-9]{3}))+|([^0-9]\d{3}[^0-9])', text_after_backlog.replace(',', ''))
+        if len(number_matches) > 0 and len(number_matches[0]) > 0:
             return 1
     return 0
 
 
 # shortest distance (in characters) between any mention of backlog
-def get_blog_sh_dist(text, matching_indices, chars_to_search = 500):
-    phrases_to_match = ["safe harbor", "private securities litigation reform", "forward-looking", "forward looking"]
+def get_blog_sh_dist(text, matching_indices, chars_to_search=5000):
+    phrases_to_match = ["non-gaap", "non gaap", "safe harbor", "private securities litigation reform",
+                        "forward-looking", "forward looking"]
     return get_closest_distance_to_phrases(text, matching_indices, chars_to_search, phrases_to_match)
 
 
 # shortest distance (in characters) between any mention of backlog
-def get_blog_surrounding_text(text, matching_indices, chars_to_search = 150):
+def get_blog_surrounding_text(text, matching_indices, chars_to_search=150):
     text_separator = '   -----------   '
     text_to_return = ''
     for index in matching_indices:
-        surrounding_text = text[ max(0, index - chars_to_search) : min(len(text), index + chars_to_search) ]
+        surrounding_text = text[max(0, index - chars_to_search): min(len(text), index + chars_to_search)]
         text_to_return += surrounding_text + text_separator
     return re.sub('[\n\r\t,]', ' ', text_to_return)
 
@@ -137,6 +152,7 @@ def get_pos_blog(text, matching_indices):
                     return 1
     return 0
 
+
 ###############################
 # End of configuration
 ###############################
@@ -158,20 +174,20 @@ def get_num_phrases_in_sentences(text, matching_indices, phrases):
 
 
 # Given a blob of text and an index, extracts the sentence that the index is in
-def get_sentence(text, index):
+def get_sentence(text, index, sentence_markers=end_of_sentence_markers):
     beginning_pointer = index
     ending_pointer = index
-    while (text[ending_pointer] not in endOfSentenceMarkers and
-           text[ending_pointer : ending_pointer + 2] not in endOfSentenceMarkers and
+    while (text[ending_pointer] not in sentence_markers and
+           text[ending_pointer: ending_pointer + 2] not in sentence_markers and
            ending_pointer < len(text)):
         ending_pointer += 1
-    
-    while (text[beginning_pointer] not in endOfSentenceMarkers and
-            text[beginning_pointer : beginning_pointer+2] not in endOfSentenceMarkers and
-            beginning_pointer > 0):
+
+    while (text[beginning_pointer] not in sentence_markers and
+           text[beginning_pointer: beginning_pointer + 2] not in sentence_markers and
+           beginning_pointer > 0):
         beginning_pointer -= 1
-    
-    return text[beginning_pointer - 1 : ending_pointer + 2]
+
+    return text[beginning_pointer - 1: ending_pointer + 2]
 
 
 def get_closest_distance_to_phrases(text, matching_indices, chars_to_search, phrases_to_match):
@@ -182,7 +198,7 @@ def get_closest_distance_to_phrases(text, matching_indices, chars_to_search, phr
     closest_distance = 999
     for index in matching_indices:
         substring_beginning_index = max(0, index - chars_to_search)
-        words_around_backlog = text[substring_beginning_index : min(len(text), index + chars_to_search)]
+        words_around_backlog = text[substring_beginning_index: min(len(text), index + chars_to_search)]
         backlog_index = index - substring_beginning_index
         for phrase in phrases_to_match:
             if phrase in words_around_backlog:
@@ -194,8 +210,9 @@ def get_closest_distance_to_phrases(text, matching_indices, chars_to_search, phr
                     else:
                         curr_distance = phraseIndex - backlog_index - len('backlog')
                     closest_distance = min(closest_distance, curr_distance)
-            
+
     return closest_distance if closest_distance is not 999 else -1
+
 
 def main():
     # Read the input file into a list of objects
@@ -203,7 +220,7 @@ def main():
 
     results_file = open(OUTPUT_FILE, 'w')
     results_file.write(OutputObject.getCsvHeaders())
-    
+
     # For each line of input
     for inputObject in input_objects:
         # Fine the data file's full path
@@ -222,39 +239,42 @@ def main():
                 n_992_mentions = [it.start() for it in re.finditer('99\.2', data_file_raw_text)]
                 if len(n_992_mentions) > 0:
                     last_mention = n_992_mentions[len(n_992_mentions) - 1]
-                    data_file_raw_text = data_file_raw_text[0 : last_mention]
+                    data_file_raw_text = data_file_raw_text[0: last_mention]
 
                 # Find all the locations of 'backlog' in the text
                 backlog_mention_locations = [it.start() for it in re.finditer('backlog', data_file_raw_text)]
 
                 # Do analysis
                 output_object = OutputObject(
-                    blog_mention = get_blog_mention(data_file_raw_text, backlog_mention_locations),
-                    blog_quant = get_blog_quant(data_file_raw_text, backlog_mention_locations),
-                    blog_quant_dist = get_blog_quant_dist(data_file_raw_text, backlog_mention_locations),
-                    blog_quant_table = get_blog_quant_table(data_file_raw_text, backlog_mention_locations),
-                    blog_sent = get_blog_sent(data_file_raw_text, backlog_mention_locations),
-                    blog_sh_dist = get_blog_sh_dist(data_file_raw_text, backlog_mention_locations),
-                    blog_surrounding_text = get_blog_surrounding_text(data_file_raw_text, backlog_mention_locations),
-                    cik = inputObject.cik,
-                    conf_call_filename = inputObject.conf_call_filename,
-                    fdate = inputObject.fdate,
-                    gvkey = inputObject.gvkey,
-                    nblog_mention = get_n_blog_mention(data_file_raw_text, backlog_mention_locations),
-                    neg_blog = get_neg_blog(data_file_raw_text, backlog_mention_locations),
-                    neg_blog_dist = get_closest_distance_to_phrases(data_file_raw_text, backlog_mention_locations, 200, negPhrasesToMatch),
-                    num_negblog = get_num_neg_blog(data_file_raw_text, backlog_mention_locations),
-                    num_posblog = get_num_pos_blog(data_file_raw_text, backlog_mention_locations),
-                    obfirm = inputObject.obfirm,
-                    pos_blog = get_pos_blog(data_file_raw_text, backlog_mention_locations),
-                    pos_blog_dist = get_closest_distance_to_phrases(data_file_raw_text, backlog_mention_locations, 200, posPhrasesToMatch),
-                    wrdsfname = inputObject.wrdsfname
-                    )
+                    blog_mention=get_blog_mention(data_file_raw_text, backlog_mention_locations),
+                    blog_quant=get_blog_quant(data_file_raw_text, backlog_mention_locations),
+                    blog_quant_dist=get_blog_quant_dist(data_file_raw_text, backlog_mention_locations),
+                    blog_quant_no_newlines=get_blog_quant_no_newlines(data_file_raw_text, backlog_mention_locations),
+                    blog_quant_table=get_blog_quant_table(data_file_raw_text, backlog_mention_locations),
+                    blog_sent=get_blog_sent(data_file_raw_text, backlog_mention_locations),
+                    blog_sh_dist=get_blog_sh_dist(data_file_raw_text, backlog_mention_locations),
+                    blog_surrounding_text=get_blog_surrounding_text(data_file_raw_text, backlog_mention_locations),
+                    cik=inputObject.cik,
+                    conf_call_filename=inputObject.conf_call_filename,
+                    fdate=inputObject.fdate,
+                    gvkey=inputObject.gvkey,
+                    nblog_mention=get_n_blog_mention(data_file_raw_text, backlog_mention_locations),
+                    neg_blog=get_neg_blog(data_file_raw_text, backlog_mention_locations),
+                    neg_blog_dist=get_closest_distance_to_phrases(data_file_raw_text, backlog_mention_locations, 200,
+                                                                  negPhrasesToMatch),
+                    num_negblog=get_num_neg_blog(data_file_raw_text, backlog_mention_locations),
+                    num_posblog=get_num_pos_blog(data_file_raw_text, backlog_mention_locations),
+                    obfirm=inputObject.obfirm,
+                    pos_blog=get_pos_blog(data_file_raw_text, backlog_mention_locations),
+                    pos_blog_dist=get_closest_distance_to_phrases(data_file_raw_text, backlog_mention_locations, 200,
+                                                                  posPhrasesToMatch),
+                    wrdsfname=inputObject.wrdsfname
+                )
 
                 # Write to file
                 results_file.write(output_object.getCsv())
                 print(output_object.getCsv())
-        except Exception: 
+        except Exception:
             print("Error loading file: [[[{}]]] @@@{}@@@".format(full_file_path, inputObject.wrdsfname))
             traceback.print_exc()
 
