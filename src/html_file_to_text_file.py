@@ -23,15 +23,15 @@ INPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahPr
 OUTPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src/textfiles'
 
 def main():
-    inputFile = sys.argv[1].rstrip()
-    
+    input_file = sys.argv[1].rstrip()
+
     # Fine the data file's full path
-    full_file_path = join(INPUT_FILES_ROOT_DIRECTORY, inputFile)
-    fileOutputPath = join(OUTPUT_FILES_ROOT_DIRECTORY, inputFile + ".rendered")
-    
-    if not os.path.exists(os.path.dirname(fileOutputPath)):
+    full_file_path = join(INPUT_FILES_ROOT_DIRECTORY, input_file)
+    file_output_path = join(OUTPUT_FILES_ROOT_DIRECTORY, input_file + ".rendered")
+
+    if not os.path.exists(os.path.dirname(file_output_path)):
         try:
-            os.makedirs(os.path.dirname(fileOutputPath))
+            os.makedirs(os.path.dirname(file_output_path))
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
@@ -44,22 +44,78 @@ def main():
         with open(full_file_path, 'r') as dataFile:
             # Get the file contents as a giant blob of text, stripping all HTML tags
             data_file_html_text = dataFile.read()
+            data_file_html_text = remove_content_block_by_type(data_file_html_text, 'GRAPHIC')
+            data_file_html_text = remove_content_block_by_type(data_file_html_text, 'EX-99.2')
+            data_file_html_text = remove_content_block_by_element(data_file_html_text, 'PDF')
 
-            # Graphics cause the markdown renderer to barf, omit those
-            graphic_locations = [i.start() for i in re.finditer('<TYPE>GRAPHIC', data_file_html_text)]
-            if len(graphic_locations) > 0:
-                # Omit everything after the first graphic
-                data_file_html_text = data_file_html_text[0 : graphic_locations[0]]
+            # Graphics contain invalid HTML, try to remove that
+            data_file_html_text = data_file_html_text.replace('<!', ' ')
 
             # data_file_raw_text = data_file_raw_text.encode('ascii', 'ignore').decode('ascii').lower()
             data_file_raw_text = Renderer().html_to_text_h2t(data_file_html_text)\
                 .encode('ascii', 'ignore').decode('ascii').lower()
 
-            output_file = open(fileOutputPath, 'w')
+            output_file = open(file_output_path, 'w')
             output_file.write(data_file_raw_text)
     except Exception: 
-        print("Error loading file: [[[{}]]] @@@{}@@@".format(full_file_path, inputFile))
+        print("Error loading file: [[[{}]]] @@@{}@@@".format(full_file_path, input_file))
         traceback.print_exc()
+
+
+def remove_content_block_by_element(text, element):
+    '''
+    Removes text in this format:
+    <TYPE>${type}
+    ...content
+    <element>
+    ....content
+    </element>
+    '''
+    # Get the number of mentions of the tag
+    beginning_tag = '<{}>'.format(element)
+    end_tag = '</{}>'.format(element)
+    mentions = re.findall(beginning_tag, text)
+
+    # Don't iterate of the list of mentions since text gets removed, indices change
+    for i in range(len(mentions)):
+        print('removing tag ' + beginning_tag)
+        # Find index of the first tag
+        block_beginning = text.find(beginning_tag)
+
+        # Find closing </element> element after the tag
+        block_end = text[block_beginning : ].find(end_tag) + block_beginning
+
+        # Remove text
+        text = text[0 : block_beginning] + text[block_end + len(end_tag) : ]
+    return text
+
+
+def remove_content_block_by_type(text, type):
+    '''
+    Removes text in this format:
+    <TYPE>${type}
+    ...content
+    <TEXT>
+    ....content
+    </TEXT>
+    '''
+    # Get the number of mentions of the tag
+    beginning_tag = '<TYPE>{}'.format(type)
+    end_tag = '</TEXT>'
+    mentions = re.findall(beginning_tag, text)
+
+    # Don't iterate of the list of mentions since text gets removed, indices change
+    for i in range(len(mentions)):
+        print('removing tag ' + beginning_tag)
+        # Find index of the first tag
+        block_beginning = text.find(beginning_tag)
+
+        # Find closes </TEXT> element after the tag
+        block_end = text[block_beginning : ].find(end_tag) + block_beginning
+
+        # Remove text
+        text = text[0 : block_beginning] + text[block_end + len(end_tag) : ]
+    return text
 
 
 if __name__ == '__main__':

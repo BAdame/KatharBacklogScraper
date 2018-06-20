@@ -14,6 +14,7 @@ class Renderer:
         h2t.mark_code = False
         h2t.pad_tables = False
         h2t.skip_internal_links = True
+        h2t.unicode_snob
 
     def html_to_text_bs(self, html):
         # BS doesn't handle newlines properly, this hack seems to fix it.

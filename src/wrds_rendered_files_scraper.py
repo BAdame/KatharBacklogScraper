@@ -41,6 +41,15 @@ OUTPUT_FILE = 'output/test-results-full-rendered.csv' if sys.argv[2] is None els
 ###############################
 
 
+# Count of 'amortized backlog' or 'backlog amortization'
+def get_amor_blog_mention(text, matching_indices):
+    phrases_to_match = ['backlog amortization', 'amortization of backlog']
+    num_mentions = 0
+    for phrase in phrases_to_match:
+        matches = re.findall(phrase, text)
+        num_mentions += len(matches)
+    return 0
+
 # '0/1 variable: 0 if "backlog" is NOT mentioned; 1 if "backlog" is mentioned
 def get_blog_mention(text, matching_indices):
     return 1 if (len(matching_indices) > 0) else 0
@@ -234,12 +243,6 @@ def main():
             with open(full_file_path, 'r') as dataFile:
                 # Get the file contents as a giant blob of text, stripping all HTML tags
                 data_file_raw_text = dataFile.read()
-
-                # Some files may include 99.2 documents at the end, we want to exclude that section if so.
-                n_992_mentions = [it.start() for it in re.finditer('99\.2', data_file_raw_text)]
-                if len(n_992_mentions) > 0:
-                    last_mention = n_992_mentions[len(n_992_mentions) - 1]
-                    data_file_raw_text = data_file_raw_text[0: last_mention]
 
                 # Find all the locations of 'backlog' in the text
                 backlog_mention_locations = [it.start() for it in re.finditer('backlog', data_file_raw_text)]

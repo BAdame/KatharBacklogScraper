@@ -28,31 +28,3 @@ def getInputObjects(inputFilePath):
             ))
         
     return inputObjects
-
-'''
-
-'''
-def getOutputObject(inputObject, dataFileContents):
-    dataFileContents = dataFileContents.lower()
-    blog_mention = None
-    blog_quant = None
-    blog_sh = None
-    blog_sent = None
-    nblog_mentions = None
-    neg_blog = None
-    pos_blog = None
-    
-    return OutputObject(
-        blog_sh = blog_sh,
-        blog_mention = blog_mention,
-        blog_quant = blog_quant,
-        blog_sent = blog_sent,
-        cik = inputObject.cik,
-        conf_call_filename = inputObject.conf_call_filename,
-        fdate = inputObject.fdate,
-        gvkey = inputObject.gvkey,
-        neg_blog = neg_blog,
-        obfirm = inputObject.obfirm,
-        pos_blog = pos_blog,
-        wrdsfname = inputObject.wrdsfname
-        )

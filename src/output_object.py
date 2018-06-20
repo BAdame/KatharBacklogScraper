@@ -7,6 +7,9 @@ Created on May 8, 2018
 
 class OutputObject:
     def __init__(self,
+                 # Number of times 'backlog amortization' is mentioned
+                 amor_blog_mention = 0,
+
                  # '0/1 variable: 0 if "backlog" is NOT mentioned; 1 if "backlog" is mentioned
                  blog_mention=0,
 
@@ -70,6 +73,7 @@ class OutputObject:
                  pos_blog_dist=0,
 
                  wrdsfname=''):
+        self.amor_blog_mention = amor_blog_mention
         self.blog_mention = blog_mention
         self.blog_quant = blog_quant
         self.blog_quant_dist = blog_quant_dist
@@ -98,7 +102,8 @@ class OutputObject:
         Columns aligned with the getCsvHeaders() method.
         TODO: Use reflection to guarantee the ordering is always the same.
         '''
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+            self.amor_blog_mention,
             self.blog_mention,
             self.blog_quant,
             self.blog_quant_dist,
@@ -127,4 +132,4 @@ class OutputObject:
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.
         '''
-        return "blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
+        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"

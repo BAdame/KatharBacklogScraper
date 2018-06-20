@@ -46,6 +46,7 @@ class TestRendering(unittest.TestCase):
         html = '<table><tr>\n<td>11</td>\n<td>12</td>\n</tr>\n<tr><td>21</td>\n<td>22</td></tr></table>'
         # '11' and '12' should be on the same line, '21' and '22' should be on the next line
         matches = re.findall('11[^\n0-9]+12[^\n]+\n[^n0-9]+21[^\n0-9]+22', render(html))
+        print(render(html))
         self.assertEqual(len(matches), 1)
 
     def test_table_noNewlines_newlinesBetweenRowsAndNotCells(self):
