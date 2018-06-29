@@ -16,6 +16,17 @@ class TestRendering(unittest.TestCase):
         html = '1\n2'
         self.assertEqual(render(html), '1 2')
 
+
+    def test_encoded_space_turns_to_space(self):
+        html = '1&#160;&#160;2'
+        self.assertEqual('1 2', render(html))
+
+
+    def test_swallowed_space_inserted_again(self):
+        html = '1.Text text.Text'
+        self.assertEqual('1. Text text. Text', render(html))
+
+
     def test_list_noNewlines_newlinesInOutput(self):
         html = '<ul><li>1</li><li>2</li></ul>'
         matches = re.findall('1[^\n]*\n[^2]*2', render(html))

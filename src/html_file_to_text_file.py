@@ -3,7 +3,7 @@ Created on May 7, 2018
 
 @author: adameb
 '''
-from bs4 import BeautifulSoup
+import codecs
 from os.path import join
 from html_to_text import Renderer
 import traceback
@@ -19,8 +19,9 @@ import re
 
 # The root folder for the data files
 INPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src/wrds-files/wrds-files/wrds/sec/warchives/'
-#INPUT_FILES_ROOT_DIRECTORY = 'C:/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src'
+# INPUT_FILES_ROOT_DIRECTORY = 'C:/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src'
 OUTPUT_FILES_ROOT_DIRECTORY = '/mnt/c/Users/adameb/eclipseworkspace/KatharSarahProject/wrds-scraper-src/textfiles'
+
 
 def main():
     input_file = sys.argv[1].rstrip()
@@ -32,34 +33,38 @@ def main():
     if not os.path.exists(os.path.dirname(file_output_path)):
         try:
             os.makedirs(os.path.dirname(file_output_path))
-        except OSError as exc: # Guard against race condition
+        except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
 
     # Hack for Windows
     if 'C:' in full_file_path:
         full_file_path = full_file_path.replace('/', '\\')
-    try:
+   # try:
         # Open the data file
-        with open(full_file_path, 'r') as dataFile:
-            # Get the file contents as a giant blob of text, stripping all HTML tags
-            data_file_html_text = dataFile.read()
-            data_file_html_text = remove_content_block_by_type(data_file_html_text, 'GRAPHIC')
-            data_file_html_text = remove_content_block_by_type(data_file_html_text, 'EX-99.2')
-            data_file_html_text = remove_content_block_by_element(data_file_html_text, 'PDF')
+    with codecs.open(full_file_path, 'r', 'utf-8') as dataFile:
+        # Get the file contents as a giant blob of text, stripping all HTML tags
+        data_file_html_text = dataFile.read()
 
-            # Graphics contain invalid HTML, try to remove that
-            data_file_html_text = data_file_html_text.replace('<!', ' ')
+        data_file_html_text = remove_content_block_by_type(data_file_html_text, 'EXCEL')
+        data_file_html_text = remove_content_block_by_type(data_file_html_text, 'GRAPHIC')
+        data_file_html_text = remove_content_block_by_type(data_file_html_text, 'EX-99.2')
+        data_file_html_text = remove_content_block_by_element(data_file_html_text, 'PDF')
+        data_file_html_text = remove_content_block_by_element(data_file_html_text, 'XBRL')
+        data_file_html_text = remove_content_block_by_type(data_file_html_text, 'XML')
+        data_file_html_text = remove_content_block_by_type(data_file_html_text, 'ZIP')
 
-            # data_file_raw_text = data_file_raw_text.encode('ascii', 'ignore').decode('ascii').lower()
-            data_file_raw_text = Renderer().html_to_text_h2t(data_file_html_text)\
-                .encode('ascii', 'ignore').decode('ascii').lower()
+        # Graphics contain invalid HTML, try to remove that
+        data_file_html_text = data_file_html_text.replace('<!', ' ')
 
-            output_file = open(file_output_path, 'w')
-            output_file.write(data_file_raw_text)
-    except Exception: 
-        print("Error loading file: [[[{}]]] @@@{}@@@".format(full_file_path, input_file))
-        traceback.print_exc()
+        data_file_raw_text = Renderer().html_to_text_h2t(data_file_html_text) \
+            .encode('ascii', 'ignore').decode('ascii').lower()
+
+        output_file = open(file_output_path, 'w')
+        output_file.write(data_file_raw_text)
+   # except Exception:
+     #   print("Error loading file: [[[{}]]] @@@{}@@@".format(full_file_path, input_file))
+      #  traceback.print_exc()
 
 
 def remove_content_block_by_element(text, element):
@@ -83,10 +88,10 @@ def remove_content_block_by_element(text, element):
         block_beginning = text.find(beginning_tag)
 
         # Find closing </element> element after the tag
-        block_end = text[block_beginning : ].find(end_tag) + block_beginning
+        block_end = text[block_beginning:].find(end_tag) + block_beginning
 
         # Remove text
-        text = text[0 : block_beginning] + text[block_end + len(end_tag) : ]
+        text = text[0: block_beginning] + text[block_end + len(end_tag):]
     return text
 
 
@@ -111,10 +116,10 @@ def remove_content_block_by_type(text, type):
         block_beginning = text.find(beginning_tag)
 
         # Find closes </TEXT> element after the tag
-        block_end = text[block_beginning : ].find(end_tag) + block_beginning
+        block_end = text[block_beginning:].find(end_tag) + block_beginning
 
         # Remove text
-        text = text[0 : block_beginning] + text[block_end + len(end_tag) : ]
+        text = text[0: block_beginning] + text[block_end + len(end_tag):]
     return text
 
 

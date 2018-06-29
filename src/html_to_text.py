@@ -14,7 +14,6 @@ class Renderer:
         h2t.mark_code = False
         h2t.pad_tables = False
         h2t.skip_internal_links = True
-        h2t.unicode_snob
 
     def html_to_text_bs(self, html):
         # BS doesn't handle newlines properly, this hack seems to fix it.
@@ -23,5 +22,8 @@ class Renderer:
         return data_file_raw_text.encode('ascii', 'ignore').decode('ascii').lower()
 
     def html_to_text_h2t(self, html):
+        # Unescape HTML space chars first
+        unescaped_html = html.replace('&#160;', ' ')
+
         # html2text always appends an extra newlines, remove them
-        return self.h2t.handle(html)[0 : -1]
+        return self.h2t.handle(unescaped_html)[0 : -1]
