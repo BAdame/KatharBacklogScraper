@@ -1,8 +1,8 @@
-'''
+"""
 Created on May 8, 2018
 
 @author: adameb
-'''
+"""
 
 
 class OutputObject:
@@ -96,7 +96,7 @@ class OutputObject:
         self.pos_blog_dist = pos_blog_dist
         self.wrdsfname = wrdsfname
 
-    def getCsv(self):
+    def get_csv(self):
         '''
         Gets the object as a CSV row.
         Columns aligned with the getCsvHeaders() method.
@@ -127,7 +127,7 @@ class OutputObject:
             self.wrdsfname)
 
     @staticmethod
-    def getCsvHeaders():
+    def get_csv_headers():
         '''
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.

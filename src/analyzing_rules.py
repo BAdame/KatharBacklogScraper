@@ -1,4 +1,5 @@
 import re
+from output_object import OutputObject
 
 # Punctuation defining end of sentences
 end_of_sentence_markers = ["? ", "! ", ". ", ".\t", "\n", "\r", '."', ".'", u"\u2022",  # Bullet point
@@ -10,6 +11,37 @@ quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars", " u
 negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down", "weak", "reduced", "negatively"]
 posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record"]
 
+
+def get_output_object(input_object, raw_text):
+    # Find all the locations of 'backlog' in the text
+    backlog_mention_locations = [it.start() for it in re.finditer('backlog', raw_text)]
+
+    return OutputObject(
+                    amor_blog_mention=get_amor_blog_mention(raw_text, backlog_mention_locations),
+                    blog_mention=get_blog_mention(raw_text, backlog_mention_locations),
+                    blog_quant=get_blog_quant(raw_text, backlog_mention_locations),
+                    blog_quant_dist=get_blog_quant_dist(raw_text, backlog_mention_locations),
+                    blog_quant_no_newlines=get_blog_quant_no_newlines(raw_text, backlog_mention_locations),
+                    blog_quant_table=get_blog_quant_table(raw_text, backlog_mention_locations),
+                    blog_sent=get_blog_sent(raw_text, backlog_mention_locations),
+                    blog_sh_dist=get_blog_sh_dist(raw_text, backlog_mention_locations),
+                    blog_surrounding_text=get_blog_surrounding_text(raw_text, backlog_mention_locations),
+                    cik=input_object.cik,
+                    conf_call_filename=input_object.conf_call_filename,
+                    fdate=input_object.fdate,
+                    gvkey=input_object.gvkey,
+                    nblog_mention=get_n_blog_mention(raw_text, backlog_mention_locations),
+                    neg_blog=get_neg_blog(raw_text, backlog_mention_locations),
+                    neg_blog_dist=get_closest_distance_to_phrases(raw_text, backlog_mention_locations, 200,
+                                                                  negPhrasesToMatch),
+                    num_negblog=get_num_neg_blog(raw_text, backlog_mention_locations),
+                    num_posblog=get_num_pos_blog(raw_text, backlog_mention_locations),
+                    obfirm=input_object.obfirm,
+                    pos_blog=get_pos_blog(raw_text, backlog_mention_locations),
+                    pos_blog_dist=get_closest_distance_to_phrases(raw_text, backlog_mention_locations, 200,
+                                                                  posPhrasesToMatch),
+                    wrdsfname=input_object.wrdsfname
+                )
 
 # Count of 'amortized backlog' or 'backlog amortization'
 def get_blog_mention(text, matching_indices):
