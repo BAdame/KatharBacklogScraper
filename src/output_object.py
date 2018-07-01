@@ -47,6 +47,8 @@ class OutputObject:
 
                  gvkey='',
 
+                 mentioner_names = '',
+
                  # number of backlog mentions
                  nblog_mention=0,
 
@@ -86,6 +88,7 @@ class OutputObject:
         self.conf_call_filename = conf_call_filename
         self.fdate = fdate
         self.gvkey = gvkey
+        self.mentioner_names = mentioner_names
         self.nblog_mention = nblog_mention
         self.neg_blog = neg_blog
         self.neg_blog_dist = neg_blog_dist
@@ -102,7 +105,7 @@ class OutputObject:
         Columns aligned with the getCsvHeaders() method.
         TODO: Use reflection to guarantee the ordering is always the same.
         '''
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
             self.amor_blog_mention,
             self.blog_mention,
             self.blog_quant,
@@ -116,6 +119,7 @@ class OutputObject:
             self.conf_call_filename,
             self.fdate,
             self.gvkey,
+            self.mentioner_names,
             self.nblog_mention,
             self.neg_blog,
             self.neg_blog_dist,
@@ -132,4 +136,4 @@ class OutputObject:
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.
         '''
-        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
+        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,mentioner_names,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"

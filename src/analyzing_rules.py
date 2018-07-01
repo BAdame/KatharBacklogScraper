@@ -12,7 +12,7 @@ negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down"
 posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record"]
 
 
-def get_output_object(input_object, raw_text):
+def get_output_object(input_object, raw_text, is_transcript = False):
     # Find all the locations of 'backlog' in the text
     backlog_mention_locations = [it.start() for it in re.finditer('backlog', raw_text)]
 
@@ -30,6 +30,7 @@ def get_output_object(input_object, raw_text):
                     conf_call_filename=input_object.conf_call_filename,
                     fdate=input_object.fdate,
                     gvkey=input_object.gvkey,
+                    mentioner_names = get_mentioner_names(raw_text, backlog_mention_locations) if is_transcript else ' ',
                     nblog_mention=get_n_blog_mention(raw_text, backlog_mention_locations),
                     neg_blog=get_neg_blog(raw_text, backlog_mention_locations),
                     neg_blog_dist=get_closest_distance_to_phrases(raw_text, backlog_mention_locations, 200,
@@ -127,6 +128,28 @@ def get_amor_blog_mention(text, matching_indices):
     return num_mentions
 # number of backlog mentions
 
+
+def get_mentioner_names(text, matching_indices):
+    speaker_separator = '------'
+    lines = text.split('\n')
+    if len(lines) < 3:
+        return ''
+
+    current = lines[2]
+    prev_1 = lines[1]
+    prev_2 = lines[0]
+    names = set()
+    # Start on the 3rd line
+    for line in lines[3 : ]:
+        # Move pointers
+        prev_2 = prev_1
+        prev_1 = current
+        current = line
+
+        if 'backlog' in line and speaker_separator in prev_1:
+            name = prev_2.split('[')[0].strip().replace(',', '')
+            names.add(name)
+    return ' ; '.join(names)
 
 def get_neg_blog(text, matching_indices):
     for index in matching_indices:
