@@ -43,7 +43,11 @@ class OutputObject:
 
                  conf_call_filename='',
 
+                 doc_length = -1,
+
                  fdate='',
+
+                 first_mention_loc = -1,
 
                  gvkey='',
 
@@ -86,7 +90,9 @@ class OutputObject:
         self.blog_surrounding_text = blog_surrounding_text
         self.cik = cik
         self.conf_call_filename = conf_call_filename
+        self.doc_length = doc_length
         self.fdate = fdate
+        self.first_mention_loc = first_mention_loc
         self.gvkey = gvkey
         self.mentioner_names = mentioner_names
         self.nblog_mention = nblog_mention
@@ -100,12 +106,12 @@ class OutputObject:
         self.wrdsfname = wrdsfname
 
     def get_csv(self):
-        '''
+        """
         Gets the object as a CSV row.
         Columns aligned with the getCsvHeaders() method.
         TODO: Use reflection to guarantee the ordering is always the same.
-        '''
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+        """
+        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
             self.amor_blog_mention,
             self.blog_mention,
             self.blog_quant,
@@ -117,7 +123,9 @@ class OutputObject:
             self.blog_surrounding_text,
             self.cik,
             self.conf_call_filename,
+            self.doc_length,
             self.fdate,
+            self.first_mention_loc,
             self.gvkey,
             self.mentioner_names,
             self.nblog_mention,
@@ -136,4 +144,4 @@ class OutputObject:
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.
         '''
-        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,fdate,gvkey,mentioner_names,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
+        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,doc_length,fdate,first_mention_loc,gvkey,mentioner_names,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"

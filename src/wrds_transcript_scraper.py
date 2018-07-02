@@ -3,14 +3,15 @@ Created on May 7, 2018
 
 @author: adameb
 """
-from output_object import OutputObject
-from os.path import join
-import traceback
-import re
-from utils import get_input_objects
-import time
+import argparse
 import sys
+import time
+import traceback
+from os.path import join
+
 from analyzing_rules import get_output_object
+from output_object import OutputObject
+from utils import get_input_objects
 
 ###############################
 # Begin configuration options
@@ -33,10 +34,22 @@ OUTPUT_FILE = 'output/test-results-full-rendered.csv' if len(sys.argv) <= 2 else
 
 
 def main():
-    # Read the input file into a list of objects
-    input_objects = get_input_objects(INPUT_FILE_PATH)
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--transcript-files-root',
+                            help='Path to the directory containing the transcript files, e.g. "~/transcripts/"',
+                            required=True)
+    arg_parser.add_argument('--output-file',
+                            help='The file to write results to, e.g. "output.csv"',
+                            required=True)
+    arg_parser.add_argument('--input-file',
+                            help='Path to the input file, e.g. "~/input-file.csv"',
+                            required=True)
+    args = arg_parser.parse_args()
 
-    results_file = open(OUTPUT_FILE, 'w')
+    # Read the input file into a list of objects
+    input_objects = get_input_objects(args.input_file)
+
+    results_file = open(args.output_file, 'w')
     results_file.write(OutputObject.get_csv_headers())
 
     # For each line of input
@@ -45,7 +58,7 @@ def main():
         if not input_object.conf_call_filename:
             continue
         # Fine the data file's full path
-        full_file_path = join(INPUT_FILES_ROOT_DIRECTORY, input_object.conf_call_filename)
+        full_file_path = join(args.transcript_files_root, input_object.conf_call_filename)
         try:
             # Open the data file
             print("Opening {}".format(full_file_path))
