@@ -1,5 +1,15 @@
 Python scripts for analyzing HTML files.
 
+### Running the transcript analyzer
+The `src/wrds_transcript_scraper.py` file is used to analyze transcript files. See the 'exampleFiles' directory for an example of a file to use as input, and an example of what the transcripts should look like.
+
+#### Running the script
+```bash
+python src/wrds_transcript_scraper.py --transcript-files-root ./inputFiles/transcripts --output-file ./output/transcript-test.csv --input-file ./inputFiles/transcript_test_input.cs
+```
+
+Use `python src/wrds_transcript_scraper.py --help` to see examples for running the script.
+
 ### html_to_text.py
 Converts HTML files to text files. This is done once on the data set, as rendering HTML is very expensive. 
 To render files in parallel use the below command, where 'input.txt' contains the complete list of all files to render.
