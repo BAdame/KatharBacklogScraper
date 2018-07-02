@@ -10,6 +10,7 @@ python src/wrds_transcript_scraper.py --transcript-files-root ./inputFiles/trans
 
 Use `python src/wrds_transcript_scraper.py --help` to see examples for running the script.
 
+## Other scripts
 ### html_to_text.py
 Converts HTML files to text files. This is done once on the data set, as rendering HTML is very expensive. 
 To render files in parallel use the below command, where 'input.txt' contains the complete list of all files to render.
