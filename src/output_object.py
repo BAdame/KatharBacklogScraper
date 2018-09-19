@@ -39,6 +39,8 @@ class OutputObject:
                  # The text around 'backlog' mentions
                  blog_surrounding_text='',
 
+                 bs_ind=0,
+
                  cik='',
 
                  conf_call_filename='',
@@ -48,6 +50,12 @@ class OutputObject:
                  fdate='',
 
                  first_mention_loc = -1,
+
+                 fls_sent = 0,
+
+                 fls_sent_earn = 0,
+
+                 fls_sent_quant = 0,
 
                  gvkey='',
 
@@ -69,6 +77,8 @@ class OutputObject:
                  # Number of times a positive word was in the same sentence as backlog
                  num_posblog=0,
 
+                 n_sent=0,
+
                  obfirm=0,
 
                  # 0/1 variable: 1 if ANY mention of "backlog" is within 100 characters of
@@ -88,11 +98,15 @@ class OutputObject:
         self.blog_sent = blog_sent
         self.blog_sh_dist = blog_sh_dist
         self.blog_surrounding_text = blog_surrounding_text
+        self.bs_ind = bs_ind
         self.cik = cik
         self.conf_call_filename = conf_call_filename
         self.doc_length = doc_length
         self.fdate = fdate
         self.first_mention_loc = first_mention_loc
+        self.fls_sent = fls_sent
+        self.fls_sent_earn = fls_sent_earn
+        self.fls_sent_quant = fls_sent_quant
         self.gvkey = gvkey
         self.mentioner_names = mentioner_names
         self.nblog_mention = nblog_mention
@@ -100,6 +114,7 @@ class OutputObject:
         self.neg_blog_dist = neg_blog_dist
         self.num_negblog = num_negblog
         self.num_posblog = num_posblog
+        self.n_sent = n_sent
         self.obfirm = obfirm
         self.pos_blog = pos_blog
         self.pos_blog_dist = pos_blog_dist
@@ -109,9 +124,9 @@ class OutputObject:
         """
         Gets the object as a CSV row.
         Columns aligned with the getCsvHeaders() method.
-        TODO: Use reflection to guarantee the ordering is always the same.
+        TODO: Use another pattern to guarantee the ordering is always the same.
         """
-        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
+        return "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n".format(
             self.amor_blog_mention,
             self.blog_mention,
             self.blog_quant,
@@ -121,11 +136,15 @@ class OutputObject:
             self.blog_sent,
             self.blog_sh_dist,
             self.blog_surrounding_text,
+            self.bs_ind,
             self.cik,
             self.conf_call_filename,
             self.doc_length,
             self.fdate,
             self.first_mention_loc,
+            self.fls_sent,
+            self.fls_sent_earn,
+            self.fls_sent_quant,
             self.gvkey,
             self.mentioner_names,
             self.nblog_mention,
@@ -133,6 +152,7 @@ class OutputObject:
             self.neg_blog_dist,
             self.num_negblog,
             self.num_posblog,
+            self.n_sent,
             self.obfirm,
             self.pos_blog,
             self.pos_blog_dist,
@@ -144,4 +164,33 @@ class OutputObject:
         Get the headers for a CSV.
         Columns aligned with the getCsv(self) method.
         '''
-        return "amor_blog_mention,blog_mention,blog_quant,blog_quant_dist,blog_quant_no_newlines,blog_quant_table,blog_sent,blog_sh_dist,blog_surrounding_text,cik,conf_call_filename,doc_length,fdate,first_mention_loc,gvkey,mentioner_names,nblog_mention,neg_blog,neg_blog_dist,num_negblog,num_posblog,obfirm,pos_blog,pos_blog_dist,wrdsfname\n"
+        return "amor_blog_mention," \
+               "blog_mention," \
+               "blog_quant," \
+               "blog_quant_dist," \
+               "blog_quant_no_newlines," \
+               "blog_quant_table," \
+               "blog_sent," \
+               "blog_sh_dist," \
+               "blog_surrounding_text," \
+               "bs_ind," \
+               "cik," \
+               "conf_call_filename," \
+               "doc_length," \
+               "fdate," \
+               "first_mention_loc," \
+               "fls_sent," \
+               "fls_sent_earn," \
+               "fls_sent_quant," \
+               "gvkey," \
+               "mentioner_names," \
+               "nblog_mention," \
+               "neg_blog," \
+               "neg_blog_dist," \
+               "num_negblog," \
+               "num_posblog," \
+               "n_sent," \
+               "obfirm," \
+               "pos_blog," \
+               "pos_blog_dist," \
+               "wrdsfname\n"

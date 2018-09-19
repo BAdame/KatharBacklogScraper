@@ -6,11 +6,15 @@ end_of_sentence_markers = ["? ", "! ", ". ", ".\t", "\n", "\r", '."', ".'", u"\u
                            ]
 end_of_sentence_markers_no_newlines = ["? ", "! ", ". ", '."', ".'", ".\t", u"\u2022",  # Bullet point
                                        ]
-quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars", " units", "home", "house", 'railcar',
-                       "theater"]
+bsPhrases = ["balance sheet", "statement of financial position"]
+earningsPhrases = ["earnings", "eps", "income", "loss", "profit"]
+quantPhrasesToMatch = ["%", "$", "million", "billion", "percent", "dollars",
+                       " units", "home", "house", 'railcar', "theater"]
+quantPhrasesRegexes = ["%", "\\$", "million", "billion", "percent", "dollars",
+                       " units", "home", "house", 'railcar', "theater"]
 negPhrasesToMatch = ["reduction", "decreas", "decline", "below", "lower", "down", "weak", "reduced", "negatively"]
 posPhrasesToMatch = ["grow", "increas", "strong", "grew", "high", "improve", "record"]
-
+flsPhrasesToMatch = ["also aim", "and forecast", "are seeking", "company believes", "also aims", "and forecasts", "are sought", "company commits", "also anticipate", "and foresee", "are targeted", "company estimates", "also anticipates", "and foresees", "are targeting", "company expects", "also assume", "and hope", "are willing", "company forecasts", "also assumes", "and hopes", "assume", "company foresees", "also believe", "and intend", "assumes", "company hopes", "also believes", "and intends", "believe", "company intends", "also commit", "and plan", "believes", "company plans", "also commits", "and plans", "but aim", "company projects", "also estimate", "and project", "but aims", "company seeks", "also estimates", "and projects", "but anticipate", "company targets", "also expect", "and seek", "but anticipates", "corporation aims", "also expects", "and seeks", "but assume", "corporation anticipates", "also forecast", "and target", "but assumes", "corporation assumes", "also forecasts", "and targets", "but believe", "corporation believes", "also foresee", "and will", "but believes", "corporation commits", "also foresees", "anticipate", "but commit", "corporation estimates", "also hope", "anticipates", "but commits", "corporation expects", "also hopes", "are aimed", "but estimate", "corporation forecasts", "also intend", "are aiming", "but estimates", "corporation foresees", "also intends", "are anticipated", "but expect", "corporation hopes", "also plan", "are anticipating", "but expects", "corporation intends", "also plans", "are assumed", "but forecast", "corporation plans", "also project", "are assuming", "but forecasts", "corporation projects", "also projects", "are believed", "but foresee", "corporation seeks", "also seek", "are believing", "but foresees", "corporation targets", "also seeks", "are committed", "but hope", "currently aim", "also target", "are committing", "but hopes", "currently aimed", "also targets", "are estimated", "but intend", "currently aiming", "also will", "are estimating", "but intends", "currently aims", "and aim", "are expected", "but plan", "currently anticipate", "and aims", "are expecting", "but plans", "currently anticipated", "and anticipate", "are forecasted", "but project", "currently anticipates", "and anticipates", "are forecasting", "but projects", "currently anticipating", "and assume", "are foreseeing", "but seek", "currently assume", "and assumes", "are foreseen", "but seeks", "currently assumed", "and believe", "are hoped", "but target", "currently assumes", "and believes", "are hoping", "but targets", "currently assuming", "and commit", "are intended", "but will", "currently believe", "and commits", "are intending", "commit", "currently believed", "and estimate", "are planed", "commits", "currently believes", "and estimates", "are planning", "company aims", "currently believing", "and expect", "are projected", "company anticipates", "currently commit", "and expects", "are projecting", "company assumes", "currently commits", "currently committed", "do not anticipate", "firm projects", "management forecasts", "currently committing", "do not assume", "firm seeks", "management foresees", "currently estimate", "do not believe", "firm targets", "management hopes", "currently estimated", "do not commit", "foresee", "management intends", "currently estimates", "do not estimate", "foresees", "management plans", "currently estimating", "do not expect", "intend", "management projects", "currently expect", "do not forecast", "intends", "management seeks", "currently expected", "do not foresee", "is aimed", "management targets", "currently expecting", "do not hope", "is aiming", "normally aim", "currently expects", "do not intend", "is anticipated", "normally aims", "currently forecast", "do not plan", "is anticipating", "normally anticipate", "currently forecasted", "do not project", "is assumed", "normally anticipates", "currently forecasting", "do not seek", "is assuming", "normally assume", "currently forecasts", "do not target", "is believed", "normally assumes", "currently foresee", "do not will", "is believing", "normally believe", "currently foreseeing", "does not aim", "is committed", "normally believes", "currently foreseen", "does not anticipate", "is committing", "normally commit", "currently foresees", "does not assume", "is estimated", "normally commits", "currently hope", "does not believe", "is estimating", "normally estimate", "currently hoped", "does not commit", "is expected", "normally estimates", "currently hopes", "does not estimate", "is expecting", "normally expect", "currently hoping", "does not expect", "is forecasted", "normally expects", "currently intend", "does not forecast", "is forecasting", "normally forecast", "currently intended", "does not foresee", "is foreseeing", "normally forecasts", "currently intending", "does not hope", "is foreseen", "normally foresee", "currently intends", "does not intend", "is hoped", "normally foresees", "currently plan", "does not plan", "is hoping", "normally hope", "currently planed", "does not project", "is intended", "normally hopes", "currently planning", "does not seek", "is intending", "normally intend", "currently plans", "does not target", "is planed", "normally intends", "currently project", "does not will", "is planning", "normally plan", "currently projected", "expect", "is projected", "normally plans", "currently projecting", "expects", "is projecting", "normally project", "currently projects", "firm aims", "is seeking", "normally projects", "currently seek", "firm anticipates", "is sought", "normally seek", "currently seeking", "firm assumes", "is targeted", "normally seeks", "currently seeks", "firm believes", "is targeting", "normally target", "currently sought", "firm commits", "is willing", "normally targets", "currently target", "firm estimates", "management aims", "normally will", "currently targeted", "firm expects", "management anticipates", "not aimed", "currently targeting", "firm forecasts", "management assumes", "not aiming", "currently targets", "firm foresees", "management believes", "not anticipated", "currently will", "firm hopes", "management commits", "not anticipating", "currently willing", "firm intends", "management estimates", "not assumed", "do not aim", "firm plans", "management expects", "not assuming", "not believed", "now estimate", "still aimed", "still planning", "not believing", "now estimated", "still aiming", "still plans", "not committed", "now estimates", "still aims", "still project", "not committing", "now estimating", "still anticipate", "still projected", "not estimated", "now expect", "still anticipated", "still projecting", "not estimating", "now expected", "still anticipates", "still projects", "not expected", "now expecting", "still anticipating", "still seek", "not expecting", "now expects", "still assume", "still seeking", "not forecasted", "now forecast", "still assumed", "still seeks", "not forecasting", "now forecasted", "still assumes", "still sought", "not foreseeing", "now forecasting", "still assuming", "still target", "not foreseen", "now forecasts", "still believe", "still targeted", "not hoped", "now foresee", "still believed", "still targeting", "not hoping", "now foreseeing", "still believes", "still targets", "not intended", "now foreseen", "still believing", "still will", "not intending", "now foresees", "still commit", "still willing", "not planed", "now hope", "still commits", "we aim", "not planning", "now hoped", "still committed", "we anticipate", "not projected", "now hopes", "still committing", "we assume", "not projecting", "now hoping", "still estimate", "we believe", "not seeking", "now intend", "still estimated", "we commit", "not sought", "now intended", "still estimates", "we estimate", "not targeted", "now intending", "still estimating", "we expect", "not targeting", "now intends", "still expect", "we forecast", "not willing", "now plan", "still expected", "we foresee", "now aim", "now planed", "still expecting", "we hope", "now aimed", "now planning", "still expects", "we intend", "now aiming", "now plans", "still forecast", "we plan", "now aims", "now project", "still forecasted", "we project", "now anticipate", "now projected", "still forecasting", "we seek", "now anticipated", "now projecting", "still forecasts", "we target", "now anticipates", "now projects", "still foresee", "we will", "now anticipating", "now seek", "still foreseeing", "will", "now assume", "now seeking", "still foreseen", "now assumed", "now seeks", "still foresees", "now assumes", "now sought", "still hope", "now assuming", "now target", "still hoped", "now believe", "now targeted", "still hopes", "now believed", "now targeting", "still hoping", "now believes", "now targets", "still intend", "now believing", "now will", "still intended", "now commit", "now willing", "still intending", "now commits", "seek", "still intends", "now committed", "seeks", "still plan", "now committing", "still aim", "still planed"]
 
 def get_output_object(input_object, raw_text, is_transcript = False):
     # Find all the locations of 'backlog' in the text
@@ -26,11 +30,15 @@ def get_output_object(input_object, raw_text, is_transcript = False):
                     blog_sent=get_blog_sent(raw_text, backlog_mention_locations),
                     blog_sh_dist=get_blog_sh_dist(raw_text, backlog_mention_locations),
                     blog_surrounding_text=get_blog_surrounding_text(raw_text, backlog_mention_locations),
+                    bs_ind=get_bs_ind(raw_text),
                     cik=input_object.cik,
                     conf_call_filename=input_object.conf_call_filename,
                     doc_length = len(raw_text),
                     fdate=input_object.fdate,
                     first_mention_loc = -1 if len(backlog_mention_locations) is 0 else backlog_mention_locations[0],
+                    fls_sent=get_fls_sent(raw_text),
+                    fls_sent_earn=get_fls_earn(raw_text),
+                    fls_sent_quant=get_fls_sent_quant(raw_text),
                     gvkey=input_object.gvkey,
                     mentioner_names = get_mentioner_names(raw_text, backlog_mention_locations) if is_transcript else ' ',
                     nblog_mention=get_n_blog_mention(raw_text, backlog_mention_locations),
@@ -39,12 +47,19 @@ def get_output_object(input_object, raw_text, is_transcript = False):
                                                                   negPhrasesToMatch),
                     num_negblog=get_num_neg_blog(raw_text, backlog_mention_locations),
                     num_posblog=get_num_pos_blog(raw_text, backlog_mention_locations),
+                    n_sent=get_n_sent(raw_text),
                     obfirm=input_object.obfirm,
                     pos_blog=get_pos_blog(raw_text, backlog_mention_locations),
                     pos_blog_dist=get_closest_distance_to_phrases(raw_text, backlog_mention_locations, 200,
                                                                   posPhrasesToMatch),
                     wrdsfname=input_object.wrdsfname
                 )
+
+def get_bs_ind(raw_text):
+    for phrase in bsPhrases:
+        if phrase in raw_text:
+            return 1
+    return 0
 
 # Count of 'amortized backlog' or 'backlog amortization'
 def get_blog_mention(text, matching_indices):
@@ -59,6 +74,50 @@ def get_blog_quant(text, matching_indices):
                 return 1
     return 0
 
+# number of sentences that contain an fls phrase
+def get_fls_sent(text):
+    sentences = set()
+    for phrase in flsPhrasesToMatch:
+        mentions = [it.start() for it in re.finditer(phrase, text)]
+        for i in mentions:
+            sentences.add(get_sentence(text, i, end_of_sentence_markers_no_newlines))
+
+    return len(sentences)
+
+# returns the number of sentences where forward looking words are mentioned in the same sentence as an earnings word
+def get_fls_earn(text):
+    return get_fls_sent_intersect(text, earningsPhrases)
+
+# returns the number of sentences where forward looking words are mentioned in the same sentence as a quant word
+def get_fls_sent_quant(text):
+    return get_fls_sent_intersect(text, quantPhrasesRegexes)
+
+def get_fls_sent_intersect(text, phrases):
+    all_mentions = []
+    for phrase in phrases:
+        phrase_mentions = [it.start() for it in re.finditer(phrase, text)]
+        all_mentions.extend(phrase_mentions)
+
+    all_sentences = set()
+    for i in all_mentions:
+        sentence = get_sentence(text, i)
+        all_sentences.add(sentence)
+
+    phrase_sentences = set()
+    for sentence in all_sentences:
+        for flsPhrase in flsPhrasesToMatch:
+            if flsPhrase in sentence:
+                phrase_sentences.add(sentence)
+
+    return len(phrase_sentences)
+
+# Number of sentences in the text
+def get_n_sent(text):
+    sentences = 0
+    for marker in end_of_sentence_markers_no_newlines:
+        sentences += text.count(marker)
+
+    return sentences
 
 # 0/1 variable: 1 if ANY mention of "backlog" is within the same sentence of
 # "%", "$", "million", "billion", "percent", or "dollars"; 0 otherwise
@@ -113,7 +172,7 @@ def get_blog_surrounding_text(text, matching_indices, chars_to_search=150):
     for index in matching_indices:
         surrounding_text = text[max(0, index - chars_to_search): min(len(text), index + chars_to_search)]
         text_to_return += surrounding_text + text_separator
-    return re.sub('[\n\r\t,]', ' ', text_to_return)
+    return re.sub('["\n\r\t,]', ' ', text_to_return)
 
 
 # shortest distance (in characters) between any mention of backlog

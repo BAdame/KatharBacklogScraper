@@ -10,6 +10,14 @@ python src/wrds_transcript_scraper.py --transcript-files-root ./inputFiles/trans
 
 Use `python src/wrds_transcript_scraper.py --help` to see examples for running the script.
 
+## Downloading new files
+1. ssh to the wrds server 
+2. Define a file of all the files you want
+3. Zip them all `zip zippedFiles -@ < ListOfFilesToPull.txt`
+4. `scp` the zip to the project's root directory
+5. unzip them to the common directory `unzip zippedFiles.zip -d wrds-files/`
+6. render them with the steps below
+
 ## Other scripts
 ### html_to_text.py
 Converts HTML files to text files. This is done once on the data set, as rendering HTML is very expensive. 

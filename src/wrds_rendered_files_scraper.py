@@ -31,7 +31,6 @@ OUTPUT_FILE = 'output/test-results-full-rendered.csv' if len(sys.argv) <= 2 else
 # Below are the text matching rules, which can be tweaked to produce different outputs.
 ###############################
 
-
 def main():
     # Read the input file into a list of objects
     input_objects = get_input_objects(INPUT_FILE_PATH)
